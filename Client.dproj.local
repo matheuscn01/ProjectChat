@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2016/08/16 08:56:16.539.pas,C:\Users\Alexandre\Documents\RAD Studio\Projects\Unit2.pas=C:\Delphi\Projetos\Chat\Client\ModuleClient.pas</Transaction>
+    <Transaction>2016/08/16 08:56:16.539.dfm,C:\Users\Alexandre\Documents\RAD Studio\Projects\Unit2.dfm=C:\Delphi\Projetos\Chat\Client\ModuleClient.dfm</Transaction>
+    <Transaction>2016/08/16 08:56:26.906.pas,C:\Users\Alexandre\Documents\RAD Studio\Projects\Unit1.pas=C:\Delphi\Projetos\Chat\Client\FMainClient.pas</Transaction>
+    <Transaction>2016/08/16 08:56:26.906.dfm,C:\Users\Alexandre\Documents\RAD Studio\Projects\Unit1.dfm=C:\Delphi\Projetos\Chat\Client\FMainClient.dfm</Transaction>
+    <Transaction>2016/08/16 08:56:33.329.dproj,C:\Users\Alexandre\Documents\RAD Studio\Projects\Project1.dproj=C:\Delphi\Projetos\Chat\Client\Client.dproj</Transaction>
+    <Transaction>2016/09/06 09:49:34.466.pas,C:\Delphi\Projetos\Chat\Client\Unit2.pas=C:\Delphi\Projetos\Chat\Client\FormLogin.pas</Transaction>
+    <Transaction>2016/09/06 09:49:34.466.dfm,C:\Delphi\Projetos\Chat\Client\Unit2.dfm=C:\Delphi\Projetos\Chat\Client\FormLogin.dfm</Transaction>
+    <Transaction>2016/09/06 10:04:40.104.pas,C:\Delphi\Projetos\Chat\Client\Unit2.pas=C:\Delphi\Projetos\Chat\Client\FormCadastro.pas</Transaction>
+    <Transaction>2016/09/06 10:04:40.104.dfm,C:\Delphi\Projetos\Chat\Client\Unit2.dfm=C:\Delphi\Projetos\Chat\Client\FormCadastro.dfm</Transaction>
+  </Transactions>
+</BorlandProject>
