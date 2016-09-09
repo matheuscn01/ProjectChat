@@ -1,7 +1,7 @@
 object dmServer: TdmServer
   OldCreateOrder = True
-  Height = 399
-  Width = 903
+  Height = 546
+  Width = 1017
   object RtcServerModule: TRtcServerModule
     Server = RtcServer
     ModuleFileName = '/QUERY'
@@ -82,8 +82,8 @@ object dmServer: TdmServer
         'and'
       '   (id_usuario2 = :pid_usuario1 or id_usuario2 = :pid_usuario2)'
       ' ')
-    Left = 568
-    Top = 208
+    Left = 424
+    Top = 288
     qoAutoCommit = True
     qoStartTransaction = True
   end
@@ -109,8 +109,8 @@ object dmServer: TdmServer
         'EXECUTE PROCEDURE CARREGA_MSG_PENDENTES (?PID_USUARIO, ?PID_CONV' +
         'ERSA)')
     StoredProcName = 'CARREGA_MSG_PENDENTES'
-    Left = 216
-    Top = 288
+    Left = 536
+    Top = 208
     qoAutoCommit = True
     qoStartTransaction = True
   end
@@ -127,7 +127,7 @@ object dmServer: TdmServer
         '   (id_usuario1 = :pid_usuario1 or id_usuario1 = :pid_usuario2) ' +
         'and'
       '   (id_usuario2 = :pid_usuario1 or id_usuario2 = :pid_usuario2)')
-    Left = 568
+    Left = 216
     Top = 288
     qoAutoCommit = True
     qoStartTransaction = True
@@ -135,7 +135,8 @@ object dmServer: TdmServer
   object qryUsuarios: TpFIBDataSet
     SelectSQL.Strings = (
       'SELECT'
-      '    ID_USUARIO'
+      '    ID_USUARIO,'
+      '    LOGIN'
       'FROM'
       '    USUARIOS'
       'where'
@@ -143,14 +144,14 @@ object dmServer: TdmServer
     Transaction = TransRead
     Database = DbChat
     UpdateTransaction = TransWrite
-    Left = 672
-    Top = 208
+    Left = 40
+    Top = 376
     oDontAutoClose = True
   end
   object dsUsuarios: TDataSource
     DataSet = qryUsuarios
-    Left = 760
-    Top = 208
+    Left = 40
+    Top = 456
   end
   object RtcEnviarMsgGrupo: TRtcFunction
     Group = RtcFunctionGroup
@@ -197,8 +198,8 @@ object dmServer: TdmServer
     SQL.Strings = (
       'EXECUTE PROCEDURE VERIFICA_ONLINE (?PID_DESTINATARIO)')
     StoredProcName = 'VERIFICA_ONLINE'
-    Left = 320
-    Top = 288
+    Left = 640
+    Top = 208
     qoAutoCommit = True
     qoStartTransaction = True
   end
@@ -216,7 +217,7 @@ object dmServer: TdmServer
       
         'update usuarios set online = false where id_usuario = :pid_usuar' +
         'io')
-    Left = 656
+    Left = 320
     Top = 288
     qoAutoCommit = True
     qoStartTransaction = True
@@ -227,9 +228,48 @@ object dmServer: TdmServer
     SQL.Strings = (
       'EXECUTE PROCEDURE LOGIN (?PLOGIN, ?PSENHA)')
     StoredProcName = 'LOGIN'
-    Left = 448
+    Left = 424
     Top = 208
     qoAutoCommit = True
+    qoStartTransaction = True
+  end
+  object sqlInsereUsuario: TpFIBStoredProc
+    Transaction = TransWrite
+    Database = DbChat
+    SQL.Strings = (
+      'EXECUTE PROCEDURE INSERE_USUARIO (?PLOGIN, ?PSENHA)')
+    StoredProcName = 'INSERE_USUARIO'
+    Left = 744
+    Top = 208
+    qoAutoCommit = True
+    qoStartTransaction = True
+  end
+  object RtcInsereUsuario: TRtcFunction
+    Group = RtcFunctionGroup
+    FunctionName = 'InsereUsuario'
+    OnExecute = RtcInsereUsuarioExecute
+    Left = 664
+    Top = 16
+  end
+  object RtcCarregaUsuarios: TRtcFunction
+    Group = RtcFunctionGroup
+    FunctionName = 'CarregaUsuarios'
+    OnExecute = RtcCarregaUsuariosExecute
+    Left = 664
+    Top = 72
+  end
+  object qrySelectId: TpFIBQuery
+    Transaction = TransWrite
+    Database = DbChat
+    SQL.Strings = (
+      'SELECT '
+      '    ID_USUARIO'
+      'FROM'
+      '    USUARIOS'
+      'WHERE'
+      '    LOGIN = :PLOGIN')
+    Left = 536
+    Top = 288
     qoStartTransaction = True
   end
 end

@@ -79,7 +79,7 @@ object Form1: TForm1
     Font.Style = []
     ParentFont = False
     TabOrder = 1
-    Text = '192.168.0.101'
+    Text = '192.168.0.58'
   end
   object btnConect: TButton
     Left = 128
