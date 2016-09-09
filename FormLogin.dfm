@@ -61,9 +61,9 @@ object FLogin: TFLogin
   end
   object labErro: TLabel
     Left = 255
-    Top = 111
+    Top = 90
     Width = 82
-    Height = 44
+    Height = 55
     Alignment = taCenter
     AutoSize = False
     Font.Charset = DEFAULT_CHARSET
@@ -105,7 +105,7 @@ object FLogin: TFLogin
   end
   object btnEntrar: TButton
     Left = 174
-    Top = 133
+    Top = 141
     Width = 59
     Height = 25
     Caption = 'Entrar'

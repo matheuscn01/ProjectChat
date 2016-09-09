@@ -19,6 +19,8 @@ type
     RtcClientModuleAux: TRtcClientModule;
     RtcResVerificaOline: TRtcResult;
     RtcResOffline: TRtcResult;
+    RtcResInsereUsuario: TRtcResult;
+    RtcResCarregaUsuarios: TRtcResult;
     procedure RtcResConfigDelayedReturn(Sender: TRtcConnection; Data,
       Result: TRtcValue);
     procedure RtcClientConnectFail(Sender: TRtcConnection);
@@ -38,6 +40,9 @@ type
       Result: TRtcValue);
     procedure RtcResOfflineReturn(Sender: TRtcConnection; Data,
       Result: TRtcValue);
+    procedure RtcResInsereUsuarioReturn(Sender: TRtcConnection; Data, Result: TRtcValue);
+    procedure RtcResCarregaUsuariosReturn(Sender: TRtcConnection; Data,
+      Result: TRtcValue);
   private
     conversaAtual : string;
   public
@@ -55,7 +60,7 @@ uses
 
 procedure TdmClient.RtcClientConnectFail(Sender: TRtcConnection);
 begin
-  showMessage('Falha ao conectar ao endereço: ' + Form1.edtEndereco.Text);
+  showMessage('Falha ao conectar ao endereço 192.168.0.58 na porta 81');
 end;
 
 procedure TdmClient.RtcResCarregaHistoricoReturn(Sender: TRtcConnection; Data,
@@ -108,6 +113,25 @@ begin
   end;
 end;
 
+procedure TdmClient.RtcResCarregaUsuariosReturn(Sender: TRtcConnection; Data,
+  Result: TRtcValue);
+var
+  usuarios, usuario: string;
+  I: integer;
+begin
+  usuarios := Result.asString;
+  for I := 1 to length(usuarios) do
+  begin
+    if (usuarios[I] <> '>') then
+      usuario :=  usuario + usuarios[I]
+    else
+    begin
+      Form1.cbDestinatarios.Items.Add(usuario);
+      usuario := '';
+    end;
+  end;
+end;
+
 procedure TdmClient.RtcResConfigDelayedReturn(Sender: TRtcConnection; Data,
   Result: TRtcValue);
 begin
@@ -135,19 +159,27 @@ end;
 procedure TdmClient.RtcResOnlineReturn(Sender: TRtcConnection; Data,
   Result: TRtcValue);
 var
-  resultado: integer;
+  resultado: string;
+  P : PChar;
 begin
-  try
-    try
-      StrToInt(Result.asString);
-    except
-      FLogin.labErro.Caption := Result.asString;
-    end;
-  finally
-    Form1.id_usuario := StrToInt(Result.asString);
+  resultado := Result.asString;
+  p := PChar(resultado);
+  if (p^ in ['0' .. '9']) then
+  begin
+    Form1.id_usuario := StrToInt(resultado);
     FLogin.logou := true;
     FLogin.ProcLogou(Sender);
-  end;
+  end
+  else
+    FLogin.labErro.Caption := Result.asString;
+end;
+
+procedure TdmClient.RtcResInsereUsuarioReturn(Sender: TRtcConnection; Data,
+  Result: TRtcValue);
+begin
+  showMessage(Result.asString);
+  if (Result.asString = 'Usuário cadastrado') then
+    FormCadastro.FCadastro.Close;
 end;
 
 procedure TdmClient.RtcResVerificaOlineReturn(Sender: TRtcConnection; Data,

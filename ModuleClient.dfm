@@ -1,7 +1,7 @@
 object dmClient: TdmClient
   OldCreateOrder = False
   Height = 327
-  Width = 907
+  Width = 1036
   object RtcClientModule: TRtcClientModule
     Client = RtcClient
     ModuleHost = '192.168.0.58'
@@ -60,7 +60,17 @@ object dmClient: TdmClient
   end
   object RtcResOffline: TRtcResult
     OnReturn = RtcResOfflineReturn
-    Left = 472
+    Left = 440
     Top = 96
+  end
+  object RtcResInsereUsuario: TRtcResult
+    OnReturn = RtcResInsereUsuarioReturn
+    Left = 840
+    Top = 24
+  end
+  object RtcResCarregaUsuarios: TRtcResult
+    OnReturn = RtcResCarregaUsuariosReturn
+    Left = 952
+    Top = 24
   end
 end

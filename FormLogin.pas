@@ -37,52 +37,55 @@ uses
   FormCadastro, FMainClient, ModuleClient;
 {$R *.dfm}
 
+//Botão para Logar
 procedure TFLogin.btnEntrarClick(Sender: TObject);
 begin
   With dmClient do
   begin
-    RtcClient.Connect();
-    //tenta logar
+    if not (RtcClient.isConnected) then
+      RtcClient.Connect();
+
     RtcClientModule.Prepare('Online');
     RtcClientModule.Param['LOGIN'] := edtLogin.Text;
     RtcClientModule.Param['SENHA'] := edtSenha.Text;
     RtcClientModule.Call(RtcResOnline);
   end;
-
-  if logou then
-    FLogin.Close
-  else
-  begin
-    edtSenha.Text := '';
-  end;
 end;
 
+//Liberar o Form da Memória
 procedure TFLogin.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   Action := caFree;
+  if (logou) then
+    Form1.Visible := true;
 end;
 
+//Boolean de Login
 procedure TFLogin.FormCreate(Sender: TObject);
 begin
   logou := false;
 end;
 
+//Abrir o Form para cadastro
 procedure TFLogin.labCadastroClick(Sender: TObject);
 begin
   FCadastro := TFCadastro.Create(Self);
   FCadastro.ShowModal;
 end;
 
+//Altera o Cursor
 procedure TFLogin.labCadastroMouseEnter(Sender: TObject);
 begin
   labCadastro.Cursor := crHandPoint;
 end;
 
+//Altera o Cursor
 procedure TFLogin.labCadastroMouseLeave(Sender: TObject);
 begin
   labCadastro.Cursor := crDefault;
 end;
 
+//Fechar o FormLogin
 procedure TFLogin.ProcLogou(Sender: TObject);
 begin
   FLogin.Close;
