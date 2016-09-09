@@ -6,7 +6,8 @@ uses
   SysUtils, Classes, rtcInfo, rtcConn, rtcDataSrv, rtcHttpSrv, rtcFunction,
   rtcSrvModule, FIBQuery, pFIBQuery, pFIBStoredProc, FIBDatabase, pFIBDatabase,
   rtcDataCli, rtcCliModule, rtcMsgSrv, rtcThrPool, DBClient,
-  pFIBClientDataSet, rtcDBCli, rtcDB, DB, FIBDataSet, pFIBDataSet;
+  pFIBClientDataSet, rtcDBCli, rtcDB, DB, FIBDataSet, pFIBDataSet, rtcDataRoute,
+  rtcLoadBalance;
 
 type
   TdmServer = class(TDataModule)
@@ -34,6 +35,10 @@ type
     RtcOffline: TRtcFunction;
     qryOffline: TpFIBQuery;
     sqlLogin: TpFIBStoredProc;
+    sqlInsereUsuario: TpFIBStoredProc;
+    RtcInsereUsuario: TRtcFunction;
+    RtcCarregaUsuarios: TRtcFunction;
+    qrySelectId: TpFIBQuery;
     procedure RtcEnviarMsgExecute(Sender: TRtcConnection;
       Param: TRtcFunctionInfo; Result: TRtcValue);
     procedure RtcCarregaHistoricoExecute(Sender: TRtcConnection;
@@ -50,6 +55,10 @@ type
       Param: TRtcFunctionInfo; Result: TRtcValue);
     procedure RtcOfflineExecute(Sender: TRtcConnection; Param: TRtcFunctionInfo;
       Result: TRtcValue);
+    procedure RtcInsereUsuarioExecute(Sender: TRtcConnection;
+      Param: TRtcFunctionInfo; Result: TRtcValue);
+    procedure RtcCarregaUsuariosExecute(Sender: TRtcConnection;
+      Param: TRtcFunctionInfo; Result: TRtcValue);
   private
     cdsBlob: TRtcDataSet;
   public
@@ -68,12 +77,21 @@ uses
 
 procedure TdmServer.RtcCarregaHistoricoExecute(Sender: TRtcConnection;
   Param: TRtcFunctionInfo; Result: TRtcValue);
+var
+  destinatario: string;
+begin
+  With qrySelectId do
   begin
+    Close;
+    ParamByName('PLOGIN').Value := Param.asString['ID_USUARIO2'];
+    ExecQuery;
+    destinatario := FieldByName('ID_USUARIO').Value;
+  end;
   with qryCarregaHistorico do
   begin
     Prepare;
     ParamByName('pid_usuario1').Value := Param.asString['ID_USUARIO1'];
-    ParamByName('pid_usuario2').Value := Param.asString['ID_USUARIO2'];
+    ParamByName('pid_usuario2').Value := destinatario;
     qryCarregaHistorico.ExecQuery;
     if (FieldByName('historico').IsNull) then
       Result.asText := 'Não há históricos'
@@ -88,7 +106,13 @@ var
   destinatario, usuario, idConversa: string;
 begin
   usuario := Param.asString['ID_USUARIO'];
-  destinatario := Param.asString['ID_DESTINATARIO'];
+  With qrySelectId do
+  begin
+    Close;
+    ParamByName('PLOGIN').Value := Param.asString['DESTINATARIO'];
+    ExecQuery;
+    destinatario := FieldByName('ID_USUARIO').Value;
+  end;
 
   With qrySelectIdConversa do
   begin
@@ -129,6 +153,26 @@ begin
   end;
 end;
 
+procedure TdmServer.RtcCarregaUsuariosExecute(Sender: TRtcConnection;
+  Param: TRtcFunctionInfo; Result: TRtcValue);
+var
+usuarios : string;
+begin
+  With qryUsuarios do
+  begin
+    qryUsuarios.Close;
+    qryUsuarios.ParamByName('PID_USUARIO').Value := StrToInt(Param.asString['ID_USUARIO']);
+    qryUsuarios.Open;
+    qryUsuarios.First;
+    while not qryUsuarios.Eof do
+    begin
+      usuarios := usuarios + FieldByName('LOGIN').Value + '>';
+      QryUsuarios.Next
+    end;
+    Result.asString := usuarios;
+  end;
+end;
+
 procedure TdmServer.RtcEnviarMsgExecute(Sender: TRtcConnection;
   Param: TRtcFunctionInfo; Result: TRtcValue);
 var
@@ -137,7 +181,13 @@ var
 begin
   msg := Param.asString['MENSAGEM'];
   id_remetente := Param.asString['ID_REMETENTE'];
-  id_destinatario := Param.asInteger['ID_DESTINATARIO'];
+  With qrySelectId do
+  begin
+    Close;
+    ParamByName('PLOGIN').Value := Param.asString['ID_DESTINATARIO'];
+    ExecQuery;
+    id_destinatario := FieldByName('ID_USUARIO').Value;
+  end;
 
   With sqlInsereMsg do
   begin
@@ -180,9 +230,23 @@ begin
   Result.asString := sqlInsereMsg.ParamByName('PMENSAGEM').Value + ' [' + DateToStr(Date) + ' ' + TimeToStr(Time) +']';
 end;
 
+procedure TdmServer.RtcInsereUsuarioExecute(Sender: TRtcConnection;
+  Param: TRtcFunctionInfo; Result: TRtcValue);
+begin
+  With sqlInsereUsuario do
+  begin
+    Prepare;
+    ParamByName('PLOGIN').Value := Param.asString['LOGIN'];
+    ParamByName('PSENHA').Value := Param.asString['SENHA'];
+    ExecProc;
+    Result.asString := ParamByName('PSTATUS').Value;
+  end;
+end;
+
 procedure TdmServer.RtcOfflineExecute(Sender: TRtcConnection;
   Param: TRtcFunctionInfo; Result: TRtcValue);
 begin
+
   With qryOffline do
   begin
     Close;
@@ -209,11 +273,21 @@ end;
 
 procedure TdmServer.RtcVerificaOnlineExecute(Sender: TRtcConnection;
   Param: TRtcFunctionInfo; Result: TRtcValue);
+var
+  id_destinatario: string;
 begin
+  With qrySelectId do
+  begin
+    Close;
+    ParamByName('PLOGIN').Value := Param.asString['ID_DESTINATARIO'];
+    ExecQuery;
+    id_destinatario := FieldByName('ID_USUARIO').Value;
+  end;
+
   With sqlVerificaOnline do
   begin
     Prepare;
-    ParamByName('PID_DESTINATARIO').Value := StrToInt(Param.asString['ID_DESTINATARIO']);
+    ParamByName('PID_DESTINATARIO').Value := StrToInt(id_destinatario);
     ExecProc;
     Result.asInteger := ParamByName('PRESULT').Value;
   end;
