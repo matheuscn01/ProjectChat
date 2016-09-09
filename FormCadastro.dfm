@@ -43,7 +43,7 @@ object FCadastro: TFCadastro
   object Label3: TLabel
     Left = 16
     Top = 111
-    Width = 147
+    Width = 142
     Height = 28
     Alignment = taCenter
     Caption = 'Confirmar Senha:'
@@ -57,9 +57,9 @@ object FCadastro: TFCadastro
   end
   object labErro: TLabel
     Left = 207
-    Top = 66
-    Width = 90
-    Height = 54
+    Top = 58
+    Width = 87
+    Height = 46
     Alignment = taCenter
     Caption = '*Senhas n'#227'o coincidem'
     Font.Charset = DEFAULT_CHARSET
@@ -84,10 +84,11 @@ object FCadastro: TFCadastro
     MaxLength = 30
     ParentFont = False
     TabOrder = 0
+    OnKeyPress = edtCadastroUsuarioKeyPress
   end
   object edtCadastroSenha: TEdit
     Left = 78
-    Top = 64
+    Top = 56
     Width = 123
     Height = 27
     Font.Charset = DEFAULT_CHARSET
@@ -99,7 +100,7 @@ object FCadastro: TFCadastro
     ParentFont = False
     PasswordChar = '*'
     TabOrder = 1
-    OnExit = edtCadastroSenhaExit
+    OnChange = edtCadastroSenhaChange
   end
   object btnCadastrar: TButton
     Left = 16
@@ -108,6 +109,7 @@ object FCadastro: TFCadastro
     Height = 27
     Caption = 'Cadastrar'
     TabOrder = 3
+    OnClick = btnCadastrarClick
   end
   object edtConfirmacaooSenha: TEdit
     Left = 169
@@ -123,7 +125,7 @@ object FCadastro: TFCadastro
     ParentFont = False
     PasswordChar = '*'
     TabOrder = 2
-    OnExit = edtConfirmacaooSenhaExit
+    OnChange = edtConfirmacaooSenhaChange
   end
   object btnCancelar: TButton
     Left = 184
